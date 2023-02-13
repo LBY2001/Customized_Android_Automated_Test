@@ -1,0 +1,9 @@
+
+.MainActivity.xml
+['Manage Dictionaries', 'Settings', 'Help', 'About', 'Licenses']
+
+eu.lepiller.nani.SettingsActivity.xml
+['Navigate up']
+['Radicals Size', 'Display style for pronunciation', 'Display style for pitch accent information']
+
+eu.lepiller.nani.MainActivity.xml
