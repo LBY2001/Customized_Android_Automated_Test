@@ -95,8 +95,7 @@ def identify_function():
 #
 if __name__ == "__main__":
     # get_touch_events()
-    time.sleep(5)
     device = u2.connect()
-    device.click(531,315)
+    device.press("back")
 
 

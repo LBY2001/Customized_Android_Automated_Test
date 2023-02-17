@@ -10,10 +10,7 @@ def button_click():
     print('提取完成!!\n\n')
 
 
-def gui(apk):
-    # 启动app
-    launch_apk(apk)
-    time.sleep(5)
+def gui():
     # 按钮窗口
     root = tk.Tk()
     root.title("功能提取")
@@ -24,4 +21,4 @@ def gui(apk):
 
 
 if __name__ == '__main__':
-    gui('rodrigodavy.com.github.pixelartist')
+    gui()

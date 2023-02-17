@@ -14,7 +14,7 @@ def monkey_test(package_name, activity_name, search_action_list):
     # 初始化到自己的adb，这里记得以后改
     adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
     # monkey模拟活动数
-    event_num = 1000
+    event_num = 10000
     # log的url，如果目录不存在则创建
     log_url = os.path.abspath('..') + "/result/" + package_name
     if not os.path.exists(log_url):

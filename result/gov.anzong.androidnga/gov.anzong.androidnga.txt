@@ -26,9 +26,16 @@ gov.anzong.androidnga.activity.MainActivity.xml
 .activity.MainActivity.xml
 ['我的主题', '我的回复', '我的缓存', '短消息', '收藏夹', '设置']
 
+gov.anzong.androidnga.activity.SettingsActivity2948.xml
+['Navigate up']
+['关键字屏蔽', '黑名单', '载入帖子图片', '载入头像', '主题页面显示底部标签页', '硬件加速', '显示签名', '使用内置浏览器打开', '彩虹模式发帖', '回帖后刷新内容']
+
 gov.anzong.androidnga.activity.MainActivity12197.xml
 ['NGA客户端']
 ['议事厅', '风纪委员会', '前瞻资讯', '经典旧世', '国服以外', '暗影国度', '五晨寺', '黑锋要塞', '铁血沙场', '魔法圣堂', '信仰神殿', '风暴祭坛', '翡翠梦境', '猎手大厅', '圣光之力', '恶魔深渊', '暗影裂口', '伊利达雷']
+
+gov.anzong.androidnga.activity.SettingsActivity14436.xml
+['Navigate up']
 
 gov.anzong.androidnga.activity.SettingsActivity.xml
 ['Navigate up']

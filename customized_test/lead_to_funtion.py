@@ -16,13 +16,42 @@ def launch_app(package_name, activity_name):
 
 
 def launch_act(package_name, activity_name):
-    print("启动" + package_name)
-    adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
-    if package_name not in activity_name:
-        activity_name = package_name + activity_name
-    cmd = adb + " shell am start -n " + package_name + '/' + activity_name.split(package_name)[1]
-    console_result = subprocess.check_output(cmd, shell=True)
-    print(console_result.decode("utf8"))
+    # 这里如果activity正确但是fragment不对就不会变，所以需要重新启动activity哦
+    pass
+    # Main不能冷启动
+    if 'MainActivity' not in activity_name:
+        print("启动" + package_name)
+        adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
+        if package_name not in activity_name:
+            activity_name = package_name + activity_name
+        # 先关闭app
+        cmd = adb + " shell am force-stop " + package_name
+        console_result = subprocess.check_output(cmd, shell=True)
+        print(console_result.decode("utf8"))
+        time.sleep(2)
+        # 再冷启动活动
+        cmd = adb + " shell am start -n " + package_name + '/' + activity_name.split(package_name)[1]
+        console_result = subprocess.check_output(cmd, shell=True)
+        print(console_result.decode("utf8"))
+    else:
+        # 启动Main
+        adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
+        cmd = adb + " shell am start -n " + package_name + '/' + activity_name.replace(package_name, '')
+        console_result = subprocess.check_output(cmd, shell=True)
+        time.sleep(1)
+        print(console_result.decode("utf8"))
+
+        adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
+        cmd = adb + " shell am force-stop " + package_name
+        console_result = subprocess.check_output(cmd, shell=True)
+        time.sleep(1)
+        print(console_result.decode("utf8"))
+
+        adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
+        cmd = adb + " shell am start -n " + package_name + '/' + activity_name.replace(package_name, '')
+        console_result = subprocess.check_output(cmd, shell=True)
+        time.sleep(1)
+        print(console_result.decode("utf8"))
 
 
 # 这个代码后期要改变，因为不一定是activity
@@ -37,10 +66,12 @@ def lead_to_function(package_name, activity_name, search_action_list):
     print(console_result.decode("utf8"))
     '''
     device = u2.connect()
+    device.press("back")
+    time.sleep(0.5)
     launch_act(package_name, activity_name)
     for search_result_action in search_action_list:
         exec(search_result_action)
-        time.sleep(0.7)
+        time.sleep(1)
 
 def perform_the_action(action_list):
     # 执行action跳转到制定entry
@@ -54,6 +85,7 @@ def perform_the_action(action_list):
 
 
 def to_entry(action_list, package_name, activity_name):
+    '''
     # 先跳转到特定的activity
     if 'MainActivity' not in activity_name:
         adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
@@ -82,6 +114,9 @@ def to_entry(action_list, package_name, activity_name):
         console_result = subprocess.check_output(cmd, shell=True)
         time.sleep(2)
         print(console_result.decode("utf8"))
+    '''
+    launch_act(package_name, activity_name)
+    perform_the_action(action_list)
 
 
 if __name__ == '__main__':

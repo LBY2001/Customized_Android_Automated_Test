@@ -147,7 +147,7 @@ def search(package_name, activity_name, function_name):
 
     # 先到探索到目前的入口
     print("跳转到初始activity")
-    lead_to_funtion.to_entry("", package_name, activity_name)
+    lead_to_funtion.launch_act(package_name, activity_name)
     time.sleep(0.5)
     # 循环执行队中的信息
     total_action_list.append([[""],[""]])
@@ -190,7 +190,7 @@ def search(package_name, activity_name, function_name):
             print("找到功能入口")
             print("到达功能入口操作：", temp_list)
             return temp_list
-        # 分析页面是否变化
+        # 分析点击后页面是否变化
         if update_ui(package_name, activity_name, ui_hash) or temp == [[""], [""]]:
             ui_hash.append(eigenvector.get_vector('../tempFile/tempXml2.xml', package_name))
             entry_action = exec_entryaction + exec_action
@@ -200,8 +200,39 @@ def search(package_name, activity_name, function_name):
             for _ in action:
                 total_action = [entry_action, [_]]
                 total_action_list.append(total_action)
+            # 分析下拉后页面是否变化
+            swip_list = []
+            while True:
+                # 下拉页面
+                device = u2.connect()
+                x = device.window_size()[0]
+                y = device.window_size()[1]
+                device.swipe(x / 2, int(y / 1.2), x / 2, y / 6)
+                swip_list.append("device.swipe(" + x.__str__() +" / 2, int(" + y.__str__() + " / 1.2), " + x.__str__() + " / 2, " + y.__str__() + " / 6)")
+                # 判断下拉后是否包含功能
+                judge, action_temp = find_function(function_dict)
+                if judge:
+                    temp_list = exec_entryaction + exec_action
+                    temp_list.append(action_temp)
+                    print("找到功能入口")
+                    print("到达功能入口操作：", temp_list)
+                    return temp_list
+                # 下拉后没有页面的更新就结束，否则更新队列
+                if update_ui(package_name, activity_name, ui_hash):
+                    ui_hash.append(eigenvector.get_vector('../tempFile/tempXml2.xml', package_name))
+                    entry_action = exec_entryaction + exec_action
+                    for swip in swip_list:
+                        entry_action = entry_action + swip
+                    time.sleep(0.7)
+                    print("\n下拉后页面分析：")
+                    action = analyse_ui()[0]
+                    for _ in action:
+                        total_action = [entry_action, [_]]
+                        total_action_list.append(total_action)
+                else:
+                    break
 
 
 if __name__ == '__main__':
-    search_list = search("rodrigodavy.com.github.pixelartist", "rodrigodavy.com.github.pixelartist.MainActivity", "About")
+    search_list = search("gov.anzong.androidnga", "gov.anzong.androidnga.activity.SettingsActivity", "黑名单")
 

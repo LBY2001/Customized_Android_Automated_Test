@@ -38,6 +38,7 @@ def run_test(package_name, function_name):
     if search_result_list[0] == "This function has not been recorded.":
         print("This function has not been recorded.")
         return
+    time.sleep(5)
     # 导向功能入口
     lead_to_function(package_name, activity_name, search_result_list)
 
@@ -48,4 +49,4 @@ def run_test(package_name, function_name):
         pass
 
 if __name__ == '__main__':
-    run_test("eu.lepiller.nani", "Settings")
+    run_test("com.example.bottomnavigationactivity_menu", "DIALOG")
