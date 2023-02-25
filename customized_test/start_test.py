@@ -49,4 +49,5 @@ def run_test(package_name, function_name):
         pass
 
 if __name__ == '__main__':
-    run_test("com.example.bottomnavigationactivity_menu", "DIALOG")
+    run_test("gov.anzong.androidnga", "添加版面")
+    # run_test("com.example.bottomnavigationactivity_menu", "DIALOG")

@@ -213,6 +213,8 @@ def search(package_name, activity_name, function_name):
                 judge, action_temp = find_function(function_dict)
                 if judge:
                     temp_list = exec_entryaction + exec_action
+                    for swip in swip_list:
+                        temp_list.append(swip)
                     temp_list.append(action_temp)
                     print("找到功能入口")
                     print("到达功能入口操作：", temp_list)
@@ -222,7 +224,7 @@ def search(package_name, activity_name, function_name):
                     ui_hash.append(eigenvector.get_vector('../tempFile/tempXml2.xml', package_name))
                     entry_action = exec_entryaction + exec_action
                     for swip in swip_list:
-                        entry_action = entry_action + swip
+                        entry_action.append(swip)
                     time.sleep(0.7)
                     print("\n下拉后页面分析：")
                     action = analyse_ui()[0]
