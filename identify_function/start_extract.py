@@ -15,6 +15,7 @@ def gui():
     root = tk.Tk()
     root.title("功能提取")
     root.geometry("200x200")
+    root.resizable(0, 0)
     button = tk.Button(root, text="提取页面功能", command=button_click)
     button.pack()
     root.mainloop()

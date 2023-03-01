@@ -3,55 +3,48 @@ import os
 import time
 
 import uiautomator2 as u2
+from tool import get_activity
 
 
-def launch_app(package_name, activity_name):
+def launch_app(apk_url, package_name, activity_name):
+    print("设备root")
+    os.system("adb root")
+    time.sleep(2)
+
+    launch_activity = get_activity.get_launch_activity(apk_url)
     print("启动" + package_name)
-    adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
     if package_name not in activity_name:
         activity_name = package_name + activity_name
-    cmd = adb + " shell am start -n " + package_name + '/' + activity_name.split(package_name)[1].replace(activity_name.split(package_name)[1].split('.')[-1], 'MainActivity')
+    # cmd = "adb shell am start -n " + package_name + '/' + activity_name.split(package_name)[1].replace(activity_name.split(package_name)[1].split('.')[-1], 'MainActivity')
+    cmd = "adb shell am start -S -n " + package_name + '/' + launch_activity
     console_result = subprocess.check_output(cmd, shell=True)
+    time.sleep(3)
     print(console_result.decode("utf8"))
 
 
 def launch_act(package_name, activity_name):
     # 这里如果activity正确但是fragment不对就不会变，所以需要重新启动activity哦
-    pass
-    # Main不能冷启动
-    if 'MainActivity' not in activity_name:
-        print("启动" + package_name)
-        adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
-        if package_name not in activity_name:
-            activity_name = package_name + activity_name
+    # if 'MainActivity' not in activity_name:
+        # 先启动app
+        # print("启动" + package_name)
+        # if package_name not in activity_name:
+        #     activity_name = package_name + activity_name
         # 先关闭app
-        cmd = adb + " shell am force-stop " + package_name
-        console_result = subprocess.check_output(cmd, shell=True)
-        print(console_result.decode("utf8"))
-        time.sleep(2)
+        # cmd = "adb shell am force-stop " + package_name
+        # console_result = subprocess.check_output(cmd, shell=True)
+        # print(console_result.decode("utf8"))
+        # time.sleep(2)
         # 再冷启动活动
-        cmd = adb + " shell am start -n " + package_name + '/' + activity_name.split(package_name)[1]
-        console_result = subprocess.check_output(cmd, shell=True)
-        print(console_result.decode("utf8"))
-    else:
-        # 启动Main
-        adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
-        cmd = adb + " shell am start -n " + package_name + '/' + activity_name.replace(package_name, '')
-        console_result = subprocess.check_output(cmd, shell=True)
-        time.sleep(1)
-        print(console_result.decode("utf8"))
-
-        adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
-        cmd = adb + " shell am force-stop " + package_name
-        console_result = subprocess.check_output(cmd, shell=True)
-        time.sleep(1)
-        print(console_result.decode("utf8"))
-
-        adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
-        cmd = adb + " shell am start -n " + package_name + '/' + activity_name.replace(package_name, '')
-        console_result = subprocess.check_output(cmd, shell=True)
-        time.sleep(1)
-        print(console_result.decode("utf8"))
+    cmd = "adb shell am start -S -n " + package_name + '/' + activity_name
+    console_result = subprocess.check_output(cmd, shell=True)
+    time.sleep(4)
+    print(console_result.decode("utf8"))
+    # else:
+    #     # 启动Main
+    #     cmd = "adb shell am start -S -n " + package_name + '/' + activity_name.split(package_name)[1]
+    #     console_result = subprocess.check_output(cmd, shell=True)
+    #     time.sleep(3)
+    #     print(console_result.decode("utf8"))
 
 
 # 这个代码后期要改变，因为不一定是activity
@@ -60,8 +53,7 @@ def lead_to_function(package_name, activity_name, search_action_list):
     print("回到功能入口")
     # 启动功能活动，其中活动名要去掉其中的包名，命令为 “adb shell am start -n {包名 / 活动名}”
     # adb需要自己添加路径？？这里要该到自己的adb去
-    adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
-    cmd = adb + " shell am start -n " + package_name + '/' + activity_name.replace(package_name, '')
+    cmd = "adb shell am start -n " + package_name + '/' + activity_name.replace(package_name, '')
     console_result = subprocess.check_output(cmd, shell=True)
     print(console_result.decode("utf8"))
     '''
@@ -88,8 +80,7 @@ def to_entry(action_list, package_name, activity_name):
     '''
     # 先跳转到特定的activity
     if 'MainActivity' not in activity_name:
-        adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
-        cmd = adb + " shell am start -n " + package_name + '/' + activity_name.replace(package_name, '')
+        cmd = "adb shell am start -n " + package_name + '/' + activity_name.replace(package_name, '')
         console_result = subprocess.check_output(cmd, shell=True)
         print(console_result.decode("utf8"))
         # 执行action跳转到指定entry
@@ -97,20 +88,17 @@ def to_entry(action_list, package_name, activity_name):
     else:
         print(package_name, activity_name)
         # 不知道为什么，MainActivity不能冷启动
-        adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
-        cmd = adb + " shell am start -n " + package_name + '/' + activity_name.replace(package_name, '')
+        cmd = "adb shell am start -n " + package_name + '/' + activity_name.replace(package_name, '')
         console_result = subprocess.check_output(cmd, shell=True)
         time.sleep(2)
         print(console_result.decode("utf8"))
 
-        adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
-        cmd = adb + " shell am force-stop " + package_name
+        cmd = "adb shell am force-stop " + package_name
         console_result = subprocess.check_output(cmd, shell=True)
         time.sleep(2)
         print(console_result.decode("utf8"))
 
-        adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
-        cmd = adb + " shell am start -n " + package_name + '/' + activity_name.replace(package_name, '')
+        cmd = "adb shell am start -n " + package_name + '/' + activity_name.replace(package_name, '')
         console_result = subprocess.check_output(cmd, shell=True)
         time.sleep(2)
         print(console_result.decode("utf8"))

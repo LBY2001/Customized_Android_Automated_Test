@@ -1,5 +1,6 @@
 import os
 import random
+import time
 
 import uiautomator2 as u2
 
@@ -29,6 +30,7 @@ def launch_apk(apk):
 def identify_function():
     # 连接设备
     device = u2.connect()
+    time.sleep(1)
 
     # dump layout文件
     # 字典，包含目前apk的包名和活动名
@@ -56,11 +58,10 @@ def identify_function():
         f.write(device.dump_hierarchy())
 
     # 截屏
-    screen = device.screenshot(screenshot_url + apk_cur_info['activity'] + '.png')
+    device.screenshot(screenshot_url + apk_cur_info['activity'] + '.png')
 
     # 分析xml文件
     xml_analyse.xmlAnalyseStart(apk_cur_info['package'])
-    # prin'../result/' + appName + '/' + appName + '.txt't(device.dump_hierarchy())
 
 
 if __name__ == '__main__':

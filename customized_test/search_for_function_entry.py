@@ -138,7 +138,6 @@ def search(package_name, activity_name, function_name):
     if not has_been_recorded:
         return ["This function has not been recorded."]
 
-
     # 初始化变量
     entry_action = []  # 到达分析入口的action  eg.["","","",...]
     action = []        # 配合entry_action，一起执行的action  eg[""]

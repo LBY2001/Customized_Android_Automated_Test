@@ -134,7 +134,8 @@ def xmlTest(fileName):
     xmlList = os.listdir(fileName)
     for xmlfile in xmlList:
         if '.xml' in xmlfile:
-            func_dict['activity'] = xmlfile.split('.xml')[0].split('Activity')[0] + 'Activity'
+            import re
+            func_dict['activity'] = re.sub(r'\d*\.xml$', '', xmlfile)
             func_dict['ui_hash'] = eigenvector.get_vector(appLayoutURL + xmlfile, appName)
             # 取xml文件
             print(xmlfile)

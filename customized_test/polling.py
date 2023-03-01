@@ -12,9 +12,8 @@ import os
 
 
 def get_monkey_pid():
-    adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
     mon_pid = ''
-    cmd = adb + ' shell ps|grep monkey'
+    cmd = 'adb shell ps|grep monkey'
     temp_con = os.popen(cmd)
     temp_result = temp_con.readlines()[0].split(' ')
     for str in temp_result:
@@ -29,10 +28,9 @@ def get_back_to_function(package_name, activity_name, search_action_list, mon_pi
     # # 这里记得自行设定规则
     # else:
     print("偏离功能入口")
-    adb = "/home/xiaobudian/Android/Sdk/platform-tools/adb"
     '''
     # 暂停monkey进程
-    cmd = adb + ' shell kill -STOP ' + mon_pid
+    cmd = 'adb shell kill -STOP ' + mon_pid
     console_result = subprocess.check_output(cmd, shell=True)
     print(console_result)
     '''

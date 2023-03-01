@@ -72,7 +72,7 @@ def identify_function():
 # import re
 #
 # def get_event_device_path():
-#     devices = os.popen("/home/xiaobudian/Android/Sdk/platform-tools/adb shell getevent -l").read()
+#     devices = os.popen("adb shell getevent -l").read()
 #     pattern = re.compile(r"/dev/input/event\d")
 #     event_devices = pattern.findall(devices)
 #     if event_devices:
@@ -82,7 +82,7 @@ def identify_function():
 # def get_touch_events():
 #     device_path = get_event_device_path()
 #     if device_path:
-#         cmd = "/home/xiaobudian/Android/Sdk/platform-tools/adb shell getevent -lt %s" % device_path
+#         cmd = "adb shell getevent -lt %s" % device_path
 #         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
 #         while True:
 #             output = process.stdout.readline().decode("utf-8")
@@ -95,7 +95,17 @@ def identify_function():
 #
 if __name__ == "__main__":
     # get_touch_events()
-    device = u2.connect()
-    device.press("back")
+    # device = u2.connect()
+    # device.press("back")
+    # result = subprocess.check_output(r"aapt dump badging ./input_apk_test/com.utazukin.ichaival_32.apk | grep launchable-activity | awk '{print $2}'", shell=True)
+    # launch_activity = result.decode('utf-8').split('name=\'')[1].split('\'')[0]
+    # print(launch_activity)
 
+    # cmd = "adb shell am start -n " + "com.csnmedia.android.bg/.activities.MainActivity"
+    # console_result = subprocess.check_output(cmd, shell=True)
+    # print(console_result.decode("utf8"))
+    import re
 
+    s = "com.google.android.apps.chrome.Main.xml"
+    s = re.sub(r'\d*\.xml$', '', s)
+    print(s)
