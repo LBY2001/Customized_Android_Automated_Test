@@ -73,18 +73,21 @@ def find_function(function_dict):
     ui_hash = function_dict['ui_hash']
     package_name = function_dict['package']
 
-    # 如果当前页面的hash对上了，
+    # 如果当前页面的hash对上了
+    # hash对上了但是可能还是缺功能，因为判断hash的代码有漏洞，详情见2023-03-01笔记
+    # 因此需要再判断一下widget是否在xml文件中
     device = u2.connect()
     layout_code = device.dump_hierarchy()
     tempXml = '../tempFile/tempXml3.xml'
     with open(tempXml, 'w', encoding='UTF-8') as f:
         f.write(layout_code)
     if eigenvector.get_vector('../tempFile/tempXml3.xml', package_name) == ui_hash:
-        x = widget.split('bounds=\"[')[1].split(',')[0]
-        y = widget.split('bounds=\"[' + x + ',')[1].split(']')[0]
-        x = (int(x) + 1).__str__()
-        y = (int(y) + 1).__str__()
-        return True, 'device.click(' + x + ',' + y + ')'
+        if widget in layout_code:
+            x = widget.split('bounds=\"[')[1].split(',')[0]
+            y = widget.split('bounds=\"[' + x + ',')[1].split(']')[0]
+            x = (int(x) + 1).__str__()
+            y = (int(y) + 1).__str__()
+            return True, 'device.click(' + x + ',' + y + ')'
 
     # 页面不一样但是找到功能
     # 方法是尝试点击该语义的按钮，但是定位时间太长，所以先判断以下页面里面是否包含这个语义字段
