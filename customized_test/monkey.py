@@ -1,13 +1,13 @@
 import os
 import subprocess
 import multiprocessing
-from polling import check
+import polling
 
 
 # 开启monkey测试
-def monkey_test(package_name, activity_name, search_action_list):
+def monkey_test(apk_path, package_name, activity_name, search_action_list):
     # 先启动守护进程轮询
-    polling_process = multiprocessing.Process(target=check, args=(package_name, activity_name, search_action_list))
+    polling_process = multiprocessing.Process(target=polling.check, args=(apk_path, package_name, activity_name, search_action_list))
     polling_process.daemon = True
     polling_process.start()
 

@@ -1,6 +1,7 @@
 import os
 import subprocess
 import re
+import os
 import time
 import psutil
 
@@ -8,7 +9,6 @@ import uiautomator2
 
 from lead_to_funtion import lead_to_function, launch_act
 from tool import get_activity
-import os
 
 
 def get_monkey_pid():
@@ -47,14 +47,63 @@ def get_back_to_function(package_name, activity_name, search_action_list, mon_pi
     print("已返回功能入口\n")
 
 
-def check(package_name, activity_name, search_action_list):
-    while True:
-        pass
-    time.sleep(5)
+def get_func_activity_set(package_name, activity_name):
+    static_atg_file = "../result/" + package_name + "/static_atg/static_atg.txt"
+    # 功能包含活动划分界限
+    with open(static_atg_file, 'r') as f:
+        atg_lines = f.readlines()
+    # 构建邻接表
+    graph = {}  # graph表示有向图，字典类型
+    for line in atg_lines:
+        src, dst = line.split("-->")
+        dst = dst.split("\n")[0]
+        if src not in graph:
+            graph[src] = set()
+        if dst not in graph:
+            graph[dst] = set()
+        graph[src].add(dst)
+
+    # 存储功能相关activity
+    function_activity_set = set()
+    def dfs(graph, node):
+        function_activity_set.add(node)  # 标记节点为已访问
+        for neighbor in graph.get(node, set()):  # 遍历该节点的所有邻居节点
+            if neighbor not in function_activity_set:  # 如果邻居节点还没有访问过，就递归调用DFS
+                dfs(graph, neighbor)
+    dfs(graph, activity_name)
+
+    # 去除直接导向入口activity的活动
+    stop_activity_set = set()
+    for line in atg_lines:
+        src, dst = line.split("-->")
+        dst = dst.split("\n")[0]
+        if dst == activity_name:
+            stop_activity_set.add(src)
+    return function_activity_set, stop_activity_set
+
+
+def check(apk_path, package_name, activity_name, search_action_list):
+    # while True:
+    #     pass
+    time.sleep(4)
     print("守护进程开始轮询")
     mon_pid = get_monkey_pid()
+    function_activity_set, stop_activity_set = get_func_activity_set(package_name, activity_name)
+
     while True:
         print("轮询ing")
+        current_activity = get_activity.get_current_activity()
+        if package_name not in current_activity:
+            current_activity = package_name + current_activity
+        if current_activity in function_activity_set - stop_activity_set:
+            continue
+        elif current_activity in stop_activity_set:
+            pass
+            # 这里要马上终止monkey
+        else:
+            pass
+            # 这里要概率终止monkey
+
         get_back_to_function(package_name, activity_name, search_action_list, mon_pid)
         time.sleep(10)
 
@@ -62,4 +111,6 @@ def check(package_name, activity_name, search_action_list):
 # check("gov.anzong.androidnga", "gov.anzong.androidnga.activity.SettingsActivity")
 # print(get_current_activity())
 if __name__ == '__main__':
-    get_back_to_function("", "", "")
+    # get_back_to_function("", "", "")
+    a = get_func_activity_set("gov.anzong.androidnga", "gov.anzong.androidnga.activity.MainActivity")
+    print(a)

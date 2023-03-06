@@ -44,12 +44,20 @@ def run_test(apk_url, function_name):
     # 导向功能入口
     lead_to_function(package_name, activity_name, search_result_list)
 
+    #########################
+    '''
+    测试用，及时删除
+    '''
+    print("Success!!!!!!!!!!!!!!!!")
+    return
+    ##########################
+
     # 新建monkey测试进程
-    monkey_process = multiprocessing.Process(target=monkey.monkey_test, args=(package_name, activity_name, search_result_list))
+    monkey_process = multiprocessing.Process(target=monkey.monkey_test, args=(apk_url, package_name, activity_name, search_result_list))
     monkey_process.start()
     while monkey_process.is_alive():
         pass
 
 if __name__ == '__main__':
-    run_test("../input_apk_test/com.utazukin.ichaival_32.apk", "Settings")
+    run_test("../input_apk_test/rodrigodavy.com.github.pixelartist_4.apk", "About")
     # run_test("com.example.bottomnavigationactivity_menu", "DIALOG")

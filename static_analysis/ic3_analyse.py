@@ -11,7 +11,7 @@ def ic3(apk_path, package_name):
     with open(results_IC3, 'w') as f:
         f.write('')
     # 执行IC3分析
-    if (os.system('timeout 150m java -Xmx4g -jar %s -apkormanifest %s -in %s -cp %s -protobuf %s | grep "PATH: "'
+    if (os.system('timeout 15m java -Xmx4g -jar %s -apkormanifest %s -in %s -cp %s -protobuf %s | grep "PATH: "'
                   % (IC3_jar, apk_path, soot_output_dir, IC3_android_jar, IC3_output_dir))) != 0:
         ic3_info = 'Failure'
         with open(IC3_fail_file, 'w') as f:
@@ -83,6 +83,20 @@ def parse_IC3(file, pkg):
         if brace == 1 and s == 3: # in component, find more exit_points
             flag = 0
         line = f.readline()
+
+    # 保存信息
+    IC3_output_dir = "../result/" + pkg + "/IC3/IC3_output/"
+    results_parseIC3_dir = IC3_output_dir + 'parsed_ic3/'
+    if not os.path.exists(results_parseIC3_dir):
+        os.makedirs(results_parseIC3_dir)
+    IC3_atg = results_parseIC3_dir + pkg + '.txt'
+    with open(IC3_atg, 'w') as f:
+        f.write('')
+    for k, v in dict.items():
+        for v1 in v:
+            with open(IC3_atg, 'a') as f:
+                f.write(k + '-->' + v1 + '\n')
+
     return dict
 
 
@@ -115,6 +129,6 @@ def get_ic3_output(apk_path):
 
 
 if __name__ == '__main__':
-    get_ic3_output("../input_apk_test/gov.anzong.androidnga_3080.apk")
-    # dict = parse_IC3("../result/gov.anzong.androidnga/IC3/IC3_output/gov.anzong.androidnga_3080.txt", 'gov.anzong.androidnga')
-    # print(dict)
+    # get_ic3_output("../input_apk_test/gov.anzong.androidnga_3080.apk")
+    dict = parse_IC3("../result/gov.anzong.androidnga/IC3/IC3_output/gov.anzong.androidnga_3080.txt", 'gov.anzong.androidnga')
+    print(dict)
