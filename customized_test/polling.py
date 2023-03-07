@@ -3,6 +3,7 @@ import subprocess
 import re
 import os
 import time
+import random
 import psutil
 
 import uiautomator2
@@ -98,19 +99,18 @@ def check(apk_path, package_name, activity_name, search_action_list):
         if current_activity in function_activity_set - stop_activity_set:
             continue
         elif current_activity in stop_activity_set:
-            pass
             # 这里要马上终止monkey
+            get_back_to_function(package_name, activity_name, search_action_list, mon_pid)
         else:
-            pass
             # 这里要概率终止monkey
+            if random.random() < 0.2:
+                get_back_to_function(package_name, activity_name, search_action_list, mon_pid)
 
-        get_back_to_function(package_name, activity_name, search_action_list, mon_pid)
+        # get_back_to_function(package_name, activity_name, search_action_list, mon_pid)
         time.sleep(10)
 
 
 # check("gov.anzong.androidnga", "gov.anzong.androidnga.activity.SettingsActivity")
 # print(get_current_activity())
 if __name__ == '__main__':
-    # get_back_to_function("", "", "")
-    a = get_func_activity_set("gov.anzong.androidnga", "gov.anzong.androidnga.activity.MainActivity")
-    print(a)
+    get_back_to_function("", "", "")
