@@ -1,7 +1,7 @@
 import os
 import time
 
-from static_path_config import Path
+from .static_path_config import Path
 from tool import get_activity
 
 

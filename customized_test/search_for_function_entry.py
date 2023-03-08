@@ -113,7 +113,7 @@ def update_ui(package_name, activity_name, ui_hash):
     print(device.device_info)
 
     # activity变化了不算作页面变换，返回False
-    if get_activity.get_current_activity() not in activity_name:
+    if get_activity.get_current_activity() != activity_name:
         return False
 
     # dump当前页面

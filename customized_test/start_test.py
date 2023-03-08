@@ -9,6 +9,7 @@ from lead_to_funtion import lead_to_function, launch_app, launch_act
 import monkey
 import polling
 from search_for_function_entry import search
+from static_analysis import get_at, ic3_analyse, soot_analyse
 
 
 def get_activity_name(package_name, function_name):
@@ -44,20 +45,36 @@ def run_test(apk_url, function_name):
     # 导向功能入口
     lead_to_function(package_name, activity_name, search_result_list)
 
-    #########################
-    '''
-    测试用，及时删除
-    '''
-    print("Success!!!!!!!!!!!!!!!!")
-    return
-    ##########################
+    # 静态分析生成atg
+    # os.chdir("../static_analysis")
+    # soot_analyse.get_soot_output(apk_url)
+    # ic3_analyse.get_ic3_output(apk_url)
+    # get_at.get_at(apk_url)
+    # os.chdir("../customized_test")
 
+    # 换一个活动开始判断测试是否跳出功能
+    func_act = tool.get_activity.get_current_activity()
+    current_package = tool.get_activity.get_current_package()
+    if current_package != package_name:
+        print("功能入口跳出app，终止测试")
+        return
     # 新建monkey测试进程
     monkey_process = multiprocessing.Process(target=monkey.monkey_test, args=(apk_url, package_name, activity_name, search_result_list))
     monkey_process.start()
-    while monkey_process.is_alive():
-        pass
+    while True:
+        time.sleep(4)
+        if monkey_process.is_alive():
+            tag, mon_pid = polling.check(apk_url, package_name, activity_name, search_result_list, func_act)
+            if tag:
+                continue
+            else:
+                monkey_process.terminate()
+                polling.get_back_to_function(package_name, activity_name, search_result_list, mon_pid)
+        if not monkey_process.is_alive():
+            monkey_process = multiprocessing.Process(target=monkey.monkey_test, args=(apk_url, package_name, activity_name, search_result_list))
+            monkey_process.start()
+
 
 if __name__ == '__main__':
-    run_test("../input_apk_test/rodrigodavy.com.github.pixelartist_4.apk", "About")
+    run_test("../input_apk_test/gov.anzong.androidnga_3080.apk", "设置")
     # run_test("com.example.bottomnavigationactivity_menu", "DIALOG")

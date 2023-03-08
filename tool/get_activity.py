@@ -5,6 +5,15 @@ import subprocess
 import uiautomator2 as u2
 
 
+# 获取当前包名
+def get_current_package():
+    # 连接设备
+    device = u2.connect()
+    # 字典，包含目前apk的包名和活动名
+    apk_cur_info = device.app_current()
+    print(apk_cur_info)
+    return apk_cur_info['package']
+
 # 获取当前activity，得到的activity信息之只有最后一部分
 def get_current_activity():
     '''
@@ -28,7 +37,8 @@ def get_current_activity():
     # 字典，包含目前apk的包名和活动名
     apk_cur_info = device.app_current()
     print(apk_cur_info)
-    return apk_cur_info['activity'].split('.')[-1]
+    # return apk_cur_info['activity'].split('.')[-1]
+    return apk_cur_info['activity']
 
 
 # 通过apk获取启动活动，eg: com.utazukin.ichaival.ArchiveList
@@ -70,7 +80,7 @@ def get_new_app_name(apk_path):
     
 
 if __name__ == '__main__':
-    # print(get_current_activity())
-    print(get_launch_activity("../input_apk_test/2_com.csnmedia.android.bg_4f478_2015-12-04.apk"))
-    print(get_version("../input_apk_test/2_com.csnmedia.android.bg_4f478_2015-12-04.apk"))
-    print(get_new_app_name("../input_apk_test/2_com.csnmedia.android.bg_4f478_2015-12-04.apk"))
+    print(get_current_package())
+    # print(get_launch_activity("../input_apk_test/2_com.csnmedia.android.bg_4f478_2015-12-04.apk"))
+    # print(get_version("../input_apk_test/2_com.csnmedia.android.bg_4f478_2015-12-04.apk"))
+    # print(get_new_app_name("../input_apk_test/2_com.csnmedia.android.bg_4f478_2015-12-04.apk"))

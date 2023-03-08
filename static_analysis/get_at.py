@@ -24,6 +24,8 @@ def get_at(apk_path):
     if not os.path.exists(atg_dir):
         os.makedirs(atg_dir)
     atg_file = atg_dir + 'static_atg.txt'
+    with open(atg_file, 'w') as f:
+        f.write('')
     with open(atg_file, 'a') as f:
         for item in total_atg:
             f.write(item)

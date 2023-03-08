@@ -18,23 +18,19 @@ def get_monkey_pid():
     temp_con = os.popen(cmd)
     temp_result = temp_con.readlines()[0].split(' ')
     for str in temp_result:
-        if str != '' and str != 'shell':
+        if str != '' and str != 'shell' and str != 'root':
             mon_pid = str
             break
     return mon_pid
 
 def get_back_to_function(package_name, activity_name, search_action_list, mon_pid):
-    # if get_activity.get_current_activity() in activity_name:
-    #     return
-    # # 这里记得自行设定规则
-    # else:
     print("偏离功能入口")
-    '''
-    # 暂停monkey进程
-    cmd = 'adb shell kill -STOP ' + mon_pid
+    # 杀死monkey进程
+    cmd = 'adb shell kill ' + mon_pid
     console_result = subprocess.check_output(cmd, shell=True)
     print(console_result)
-    '''
+    time.sleep(1)
+
     # 返回功能入口
     print("尝试返回功能入口\n")
     lead_to_function(package_name, activity_name, search_action_list)
@@ -83,34 +79,63 @@ def get_func_activity_set(package_name, activity_name):
     return function_activity_set, stop_activity_set
 
 
-def check(apk_path, package_name, activity_name, search_action_list):
+def check(apk_path, package_name, activity_name, search_action_list, func_act):
     # while True:
     #     pass
-    time.sleep(4)
+    time.sleep(3)
     print("守护进程开始轮询")
     mon_pid = get_monkey_pid()
-    function_activity_set, stop_activity_set = get_func_activity_set(package_name, activity_name)
+    print("monkey_id:", mon_pid)
+    function_activity_set, stop_activity_set = get_func_activity_set(package_name, func_act)
 
-    while True:
-        print("轮询ing")
-        current_activity = get_activity.get_current_activity()
-        if package_name not in current_activity:
-            current_activity = package_name + current_activity
-        if current_activity in function_activity_set - stop_activity_set:
-            continue
-        elif current_activity in stop_activity_set:
-            # 这里要马上终止monkey
-            get_back_to_function(package_name, activity_name, search_action_list, mon_pid)
+    print("轮询ing")
+    # cmd = 'adb shell kill -STOP ' + mon_pid
+    # print(cmd)
+    # console_result = subprocess.check_output(cmd, shell=True)
+    # print(console_result)
+    current_activity = get_activity.get_current_activity()
+    current_package = get_activity.get_current_package()
+    print("current_activity: ", current_activity)
+    print("功能活动：", func_act)
+    if current_activity in function_activity_set - stop_activity_set:
+        # cmd = 'adb shell kill -CONT ' + mon_pid
+        # console_result = subprocess.check_output(cmd, shell=True)
+        # print(console_result)
+        print("当前活动属于功能")
+        return True, mon_pid
+    elif current_activity in stop_activity_set or current_package != package_name:
+        # cmd = 'adb shell kill -CONT ' + mon_pid
+        # console_result = subprocess.check_output(cmd, shell=True)
+        # print(console_result)
+        # 这里要马上终止monkey
+        print("当前活动偏离功能")
+        return False, mon_pid
+    else:
+        # 这里要概率终止monkey
+        if random.random() < 0.2:
+            # cmd = 'adb shell kill -CONT ' + mon_pid
+            # console_result = subprocess.check_output(cmd, shell=True)
+            # print(console_result)
+            print("未知act, return")
+            return False, mon_pid
         else:
-            # 这里要概率终止monkey
-            if random.random() < 0.2:
-                get_back_to_function(package_name, activity_name, search_action_list, mon_pid)
+            # cmd = 'adb shell kill -CONT ' + mon_pid
+            # console_result = subprocess.check_output(cmd, shell=True)
+            # print(console_result)
+            print("未知act, continue")
+            return True, mon_pid
 
-        # get_back_to_function(package_name, activity_name, search_action_list, mon_pid)
-        time.sleep(10)
+        # cmd = 'adb shell kill -CONT ' + mon_pid
+        # console_result = subprocess.check_output(cmd, shell=True)
+        # print(console_result)
+        # # get_back_to_function(package_name, activity_name, search_action_list, mon_pid)
+        # time.sleep(1)
 
 
 # check("gov.anzong.androidnga", "gov.anzong.androidnga.activity.SettingsActivity")
 # print(get_current_activity())
 if __name__ == '__main__':
-    get_back_to_function("", "", "")
+    # get_back_to_function("", "", "")
+    function_activity_set, stop_activity_set = get_func_activity_set("rodrigodavy.com.github.pixelartist", "rodrigodavy.com.github.pixelartist.MainActivity")
+    print(function_activity_set)
+    print(stop_activity_set)

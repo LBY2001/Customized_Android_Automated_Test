@@ -1,7 +1,7 @@
 import os
 
 from tool import get_activity
-from static_path_config import Path
+from .static_path_config import Path
 
 
 def soot(apk_path, package_name):
@@ -47,6 +47,7 @@ def get_soot_output(apk_path):
     if not os.path.exists(test_output_dir):
         os.makedirs(test_output_dir)
     soot(apk_path, package_name)
+    get_soot_atg(apk_path)
 
 
 if __name__ == '__main__':
