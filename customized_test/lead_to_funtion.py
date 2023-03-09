@@ -62,7 +62,11 @@ def lead_to_function(package_name, activity_name, search_action_list):
     time.sleep(0.5)
     launch_act(package_name, activity_name)
     for search_result_action in search_action_list:
-        exec(search_result_action)
+        try:
+            exec(search_result_action)
+        except:
+            device.press("back")
+            lead_to_function(package_name, activity_name, search_action_list)
         time.sleep(1)
 
 def perform_the_action(action_list):

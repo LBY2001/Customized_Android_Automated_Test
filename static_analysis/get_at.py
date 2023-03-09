@@ -6,7 +6,7 @@ from tool import get_activity
 def get_at(apk_path):
     package_name = get_activity.get_package_name(apk_path)
     version = get_activity.get_version(apk_path)
-    soot_at_file = "../result/" + package_name + "/soot_test_output/storydroid_atgs/" + package_name + '_' + version + '.txt'
+    soot_at_file = "../result/" + package_name + "/soot_test_output/storydroid_atgs/" + os.path.basename(apk_path).split(".apk")[-2] + '.txt'
     ic3_at_file = "../result/" + package_name + "/IC3/IC3_output/parsed_ic3/" + package_name + '.txt'
     # 打开ic3与soot的at文件
     with open(soot_at_file, 'r') as f:

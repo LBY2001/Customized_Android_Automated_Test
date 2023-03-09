@@ -46,11 +46,12 @@ def run_test(apk_url, function_name):
     lead_to_function(package_name, activity_name, search_result_list)
 
     # 静态分析生成atg
-    # os.chdir("../static_analysis")
-    # soot_analyse.get_soot_output(apk_url)
-    # ic3_analyse.get_ic3_output(apk_url)
-    # get_at.get_at(apk_url)
-    # os.chdir("../customized_test")
+    if not os.path.exists("../result/" + package_name + "/static_atg/"):
+        os.chdir("../static_analysis")
+        soot_analyse.get_soot_output(apk_url)
+        ic3_analyse.get_ic3_output(apk_url)
+        get_at.get_at(apk_url)
+        os.chdir("../customized_test")
 
     # 换一个活动开始判断测试是否跳出功能
     func_act = tool.get_activity.get_current_activity()
@@ -58,6 +59,11 @@ def run_test(apk_url, function_name):
     if current_package != package_name:
         print("功能入口跳出app，终止测试")
         return
+
+    # monkey测试log的url，如果目录不存在则创建
+    log_url = "../result/" + package_name + "/monkey/"
+    if not os.path.exists(log_url):
+        os.makedirs(log_url)
     # 新建monkey测试进程
     monkey_process = multiprocessing.Process(target=monkey.monkey_test, args=(apk_url, package_name, activity_name, search_result_list))
     monkey_process.start()
@@ -71,10 +77,14 @@ def run_test(apk_url, function_name):
                 monkey_process.terminate()
                 polling.get_back_to_function(package_name, activity_name, search_result_list, mon_pid)
         if not monkey_process.is_alive():
+            if monkey.monkey_log_analyse(package_name):
+                print("发现crash")
+                ########### 要记得清空log
+                return
             monkey_process = multiprocessing.Process(target=monkey.monkey_test, args=(apk_url, package_name, activity_name, search_result_list))
             monkey_process.start()
 
 
 if __name__ == '__main__':
-    run_test("../input_apk_test/gov.anzong.androidnga_3080.apk", "设置")
+    run_test("../input_apk_test/BottomNavigationActivity_Menu.apk", "DIALOG")
     # run_test("com.example.bottomnavigationactivity_menu", "DIALOG")

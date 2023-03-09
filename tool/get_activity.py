@@ -80,7 +80,7 @@ def get_new_app_name(apk_path):
     
 
 if __name__ == '__main__':
-    print(get_current_package())
+    print(get_current_activity())
     # print(get_launch_activity("../input_apk_test/2_com.csnmedia.android.bg_4f478_2015-12-04.apk"))
     # print(get_version("../input_apk_test/2_com.csnmedia.android.bg_4f478_2015-12-04.apk"))
     # print(get_new_app_name("../input_apk_test/2_com.csnmedia.android.bg_4f478_2015-12-04.apk"))

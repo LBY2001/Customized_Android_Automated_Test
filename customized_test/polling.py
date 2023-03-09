@@ -87,7 +87,7 @@ def check(apk_path, package_name, activity_name, search_action_list, func_act):
     mon_pid = get_monkey_pid()
     print("monkey_id:", mon_pid)
     function_activity_set, stop_activity_set = get_func_activity_set(package_name, func_act)
-
+    print("功能包含的活动：", function_activity_set - stop_activity_set)
     print("轮询ing")
     # cmd = 'adb shell kill -STOP ' + mon_pid
     # print(cmd)
@@ -97,7 +97,7 @@ def check(apk_path, package_name, activity_name, search_action_list, func_act):
     current_package = get_activity.get_current_package()
     print("current_activity: ", current_activity)
     print("功能活动：", func_act)
-    if current_activity in function_activity_set - stop_activity_set:
+    if any(current_activity in act for act in function_activity_set - stop_activity_set) or current_activity == func_act or current_activity in func_act:
         # cmd = 'adb shell kill -CONT ' + mon_pid
         # console_result = subprocess.check_output(cmd, shell=True)
         # print(console_result)

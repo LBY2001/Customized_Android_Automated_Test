@@ -104,8 +104,23 @@ if __name__ == "__main__":
     # cmd = "adb shell am start -n " + "com.csnmedia.android.bg/.activities.MainActivity"
     # console_result = subprocess.check_output(cmd, shell=True)
     # print(console_result.decode("utf8"))
-    import re
+    # import re
+    #
+    # s = "com.google.android.apps.chrome.Main.xml"
+    # s = re.sub(r'\d*\.xml$', '', s)
+    # print(s)
 
-    s = "com.google.android.apps.chrome.Main.xml"
-    s = re.sub(r'\d*\.xml$', '', s)
-    print(s)
+    # cmd = "adb shell monkey --throttle 50 -p com.example.bottomnavigationactivity_menu -v 10000"
+    # p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    #
+    # for line in iter(p.stdout.readline, b''):
+    #     output = line.decode('utf-8')
+    #     print(output)
+    #     if 'CRASH' in output:
+    #         # Handle the crash
+    #         print("CRASH DETECTED: " + output)
+    #         # further actions can be taken such as sending notifications or saving crash log
+    #         break
+    # p.kill()
+    a = list()
+    print(len(a))
