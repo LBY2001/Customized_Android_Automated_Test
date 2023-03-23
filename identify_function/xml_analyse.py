@@ -12,6 +12,22 @@ import numpy as np
 from tool import eigenvector
 
 
+# 直接判断是否是功能模块
+def isModule(node):
+    # 后面要统计常见的功能模块加进去
+    moduleSet = {"Settings"}
+    if 'text' in node.attrib:
+        for item in moduleSet:
+            if item in node.attrib['text']:
+                return True, node.attrib['text']
+
+    if 'content-desc' in node.attrib:
+        for item in moduleSet:
+            if item in node.attrib['content-desc']:
+                return True, node.attrib['content-desc']
+    return False, ''
+
+
 # 判断是否为控件容器
 def isContainer(node):
     # 容器控件类型集合，可以扩充
@@ -53,9 +69,18 @@ def getSemantics(node):
     # 若节点不是叶子节点
     if len(childrenNode) != 0:
         # 先判断一下，如果子节点中有checkable的节点则淘汰
+        checked_judge = 0
+        checkable_judge = 0
         for child in childrenNode:
             if child.attrib['checkable'] == 'true':
-                return ''
+                checkable_judge = checkable_judge + 1
+            if child.attrib['checked'] == 'true':
+                checked_judge = checked_judge + 1
+        if checkable_judge == 1:
+            pass
+        elif checked_judge > 1:
+            return ''
+
         # 取语义
         for child in childrenNode:
             # # 若checkable则不取语义
@@ -106,6 +131,20 @@ def extraction(node):
 # 遍历xml文件
 def traversal(rootNode, level):
     # print(level, rootNode.tag, rootNode.attrib,'\n')
+    # 判断是功能模块直接加进去
+    module_judge, semantics = isModule(rootNode)
+    if module_judge:
+        func = list()
+        temp_dict = func_dict
+        temp_dict['function_name'] = semantics
+        temp_dict['widget'] = et.tostring(rootNode, encoding='unicode').split('\n')[0]
+        if not have_this_function(temp_dict):
+            update_function(temp_dict)
+        func.append(getSemantics(rootNode))
+        if len(func) != 0:
+            recordModule(func.__str__())
+            print(func)
+
     # 判断相关的控件是否为容器控件，并提取功能语义
     if isContainer(rootNode):
         # 提取语义功能

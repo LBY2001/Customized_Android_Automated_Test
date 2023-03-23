@@ -1,22 +1,20 @@
 import os
-import subprocess
-import re
-import os
-import time
 import random
-import psutil
+import subprocess
+import time
 
-import uiautomator2
-
-from lead_to_funtion import lead_to_function, launch_act
+from lead_to_funtion import lead_to_function
 from tool import get_activity
 
 
 def get_monkey_pid():
     mon_pid = ''
     cmd = 'adb shell ps|grep monkey'
-    temp_con = os.popen(cmd)
-    temp_result = temp_con.readlines()[0].split(' ')
+    temp_con = os.popen(cmd).readlines()
+    if len(temp_con) == 0:
+        print("无monkey测试")
+        return "-1"
+    temp_result = temp_con[0].split(' ')
     for str in temp_result:
         if str != '' and str != 'shell' and str != 'root':
             mon_pid = str
@@ -40,7 +38,7 @@ def get_back_to_function(package_name, activity_name, search_action_list, mon_pi
     console_result = subprocess.check_output(cmd, shell=True)
     print(console_result)
     '''
-    time.sleep(1)
+    time.sleep(4)
     print("已返回功能入口\n")
 
 
@@ -85,6 +83,8 @@ def check(apk_path, package_name, activity_name, search_action_list, func_act):
     time.sleep(3)
     print("守护进程开始轮询")
     mon_pid = get_monkey_pid()
+    if mon_pid == "-1":
+        return False, mon_pid
     print("monkey_id:", mon_pid)
     function_activity_set, stop_activity_set = get_func_activity_set(package_name, func_act)
     print("功能包含的活动：", function_activity_set - stop_activity_set)
@@ -102,7 +102,13 @@ def check(apk_path, package_name, activity_name, search_action_list, func_act):
         # console_result = subprocess.check_output(cmd, shell=True)
         # print(console_result)
         print("当前活动属于功能")
-        return True, mon_pid
+        # 这里要概率终止monkey
+        if random.random() < 0.05:
+            print("随即返回, return")
+            return False, mon_pid
+        else:
+            print("未知act, continue")
+            return True, mon_pid
     elif current_activity in stop_activity_set or current_package != package_name:
         # cmd = 'adb shell kill -CONT ' + mon_pid
         # console_result = subprocess.check_output(cmd, shell=True)
@@ -112,7 +118,7 @@ def check(apk_path, package_name, activity_name, search_action_list, func_act):
         return False, mon_pid
     else:
         # 这里要概率终止monkey
-        if random.random() < 0.2:
+        if random.random() < 0.3:
             # cmd = 'adb shell kill -CONT ' + mon_pid
             # console_result = subprocess.check_output(cmd, shell=True)
             # print(console_result)
@@ -136,6 +142,7 @@ def check(apk_path, package_name, activity_name, search_action_list, func_act):
 # print(get_current_activity())
 if __name__ == '__main__':
     # get_back_to_function("", "", "")
-    function_activity_set, stop_activity_set = get_func_activity_set("rodrigodavy.com.github.pixelartist", "rodrigodavy.com.github.pixelartist.MainActivity")
-    print(function_activity_set)
-    print(stop_activity_set)
+    # function_activity_set, stop_activity_set = get_func_activity_set("rodrigodavy.com.github.pixelartist", "rodrigodavy.com.github.pixelartist.MainActivity")
+    # print(function_activity_set)
+    # print(stop_activity_set)
+    print(get_monkey_pid())

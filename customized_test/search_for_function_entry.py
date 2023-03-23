@@ -102,7 +102,7 @@ def find_function(function_dict):
                 exec(str)
                 return True, str
             except:
-                return False, ''
+                return False, '-1crash'
     return False, ''
 
 
@@ -147,9 +147,18 @@ def search(package_name, activity_name, function_name):
     total_action = []  # 把entry_action和action存在一起，等待入队  eg[["","",""],[""]]
     total_action_list = []   # 待执行action队   [[["","",""],[""]],[["","",""],[""]],...]
 
+    # 取消上下边栏
+    cmd = "adb shell wm overscan 0,-140,0,-150"
+    console_result = subprocess.check_output(cmd, shell=True)
+    print(console_result)
+    print("禁止上下边栏")
+
     # 先到探索到目前的入口
     print("跳转到初始activity")
-    lead_to_funtion.launch_act(package_name, activity_name)
+    judge = lead_to_funtion.launch_act(package_name, activity_name)
+    if not judge:
+        print("活动冷启动失败")
+        return
     time.sleep(0.5)
     # 循环执行队中的信息
     total_action_list.append([[""],[""]])
@@ -181,6 +190,8 @@ def search(package_name, activity_name, function_name):
         lead_to_funtion.perform_the_action(exec_action)
         # 分析是否包含目标功能
         judge, action_temp = find_function(function_dict)
+        if action_temp == '-1crash':
+            return
         if judge:
             # print(exec_entryaction + exec_action, action_temp)
             # x = function_dict['widget'].split('bounds=\"[')[1].split(',')[0]
@@ -213,6 +224,8 @@ def search(package_name, activity_name, function_name):
                 swip_list.append("device.swipe(" + x.__str__() +" / 2, int(" + y.__str__() + " / 1.2), " + x.__str__() + " / 2, " + y.__str__() + " / 6)")
                 # 判断下拉后是否包含功能
                 judge, action_temp = find_function(function_dict)
+                if action_temp == '-1crash':
+                    return
                 if judge:
                     temp_list = exec_entryaction + exec_action
                     for swip in swip_list:

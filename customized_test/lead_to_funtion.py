@@ -2,6 +2,7 @@ import subprocess
 import os
 import time
 
+
 import uiautomator2 as u2
 from tool import get_activity
 
@@ -12,6 +13,9 @@ def launch_app(apk_url, package_name, activity_name):
     time.sleep(2)
 
     launch_activity = get_activity.get_launch_activity(apk_url)
+    if launch_activity == '':
+        return
+
     print("启动" + package_name)
     if package_name not in activity_name:
         activity_name = package_name + activity_name
@@ -39,6 +43,10 @@ def launch_act(package_name, activity_name):
     console_result = subprocess.check_output(cmd, shell=True)
     time.sleep(4)
     print(console_result.decode("utf8"))
+    if get_activity.get_current_package() != package_name:
+        # 这里可以调取StoryDroid的启动方法
+        return False
+    return True
     # else:
     #     # 启动Main
     #     cmd = "adb shell am start -S -n " + package_name + '/' + activity_name.split(package_name)[1]

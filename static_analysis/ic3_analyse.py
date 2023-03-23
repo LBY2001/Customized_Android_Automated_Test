@@ -24,6 +24,16 @@ def ic3(apk_path, package_name):
 
 
 def parse_IC3(file, pkg):
+    # 初始化文件目录
+    IC3_output_dir = "../result/" + pkg + "/IC3/IC3_output/"
+    results_parseIC3_dir = IC3_output_dir + 'parsed_ic3/'
+    if not os.path.exists(results_parseIC3_dir):
+        os.makedirs(results_parseIC3_dir)
+    IC3_atg = results_parseIC3_dir + pkg + '.txt'
+    with open(IC3_atg, 'w') as f:
+        f.write('')
+
+    # 原代码
     dict = {}
     if not os.path.exists(file):
         return
@@ -85,13 +95,6 @@ def parse_IC3(file, pkg):
         line = f.readline()
 
     # 保存信息
-    IC3_output_dir = "../result/" + pkg + "/IC3/IC3_output/"
-    results_parseIC3_dir = IC3_output_dir + 'parsed_ic3/'
-    if not os.path.exists(results_parseIC3_dir):
-        os.makedirs(results_parseIC3_dir)
-    IC3_atg = results_parseIC3_dir + pkg + '.txt'
-    with open(IC3_atg, 'w') as f:
-        f.write('')
     for k, v in dict.items():
         for v1 in v:
             with open(IC3_atg, 'a') as f:
@@ -119,7 +122,7 @@ def get_ic3_output(apk_path):
     ic3_output, ic3_info = ic3(apk_path, package_name)
     end_time = time.time()
     run_time = end_time - start_time  # 程序的运行时间，单位为秒
-    print('ic3与运行时间：', run_time)
+    print('ic3运行时间：', run_time)
 
     # 解析ic3结果生成at，可能结果为空
     version = get_activity.get_version(apk_path)

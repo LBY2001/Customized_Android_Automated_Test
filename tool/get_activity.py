@@ -1,5 +1,3 @@
-import re
-import os
 import subprocess
 
 import uiautomator2 as u2
@@ -48,6 +46,9 @@ def get_launch_activity(apk_path):
         r"aapt dump badging " + apk_path + " | grep launchable-activity | awk '{print $2}'",
         shell=True)
     # 处理命令行结果
+    if result == b"":
+        return ""
+
     launch_activity = result.decode('utf-8').split('name=\'')[1].split('\'')[0]
     return launch_activity
 
@@ -65,13 +66,14 @@ def get_package_name(apk_path):
         "aapt dump badging " + apk_path + " | grep package",
         shell=True)
     defined_pkg_name = pkg_line.decode('utf-8').split('\'')[1]
-    pkg_name = ""
-    launcher = get_launch_activity(apk_path)
-    if launcher == '' or defined_pkg_name in launcher or launcher.startswith("."):
-        pkg_name = defined_pkg_name
-    else:
-        pkg_name = launcher.replace('.' + launcher.split('.')[-1], '').split('\'')[1]
-    return pkg_name
+    # pkg_name = ""
+    # launcher = get_launch_activity(apk_path)
+    # if launcher == '' or defined_pkg_name in launcher or launcher.startswith("."):
+    #     pkg_name = defined_pkg_name
+    # else:
+    #     pkg_name = launcher.replace('.' + launcher.split('.')[-1], '').split('\'')[1]
+    return defined_pkg_name
+    # return pkg_name
 
 
 # 通过apk获取标准apk名称

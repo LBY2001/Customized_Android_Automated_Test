@@ -1,11 +1,7 @@
+import time
 import os
-import random
-import multiprocessing
-import subprocess
-import sys
 
 import uiautomator2 as u2
-import time
 
 
 def identify_function():
@@ -93,34 +89,116 @@ def identify_function():
 #                 y = process.stdout.readline().decode("utf-8").split(" ")[-2].strip()
 #                 print("Touch event detected, x: %s, y: %s" % (x, y))
 #
+
+# def parse_IC3(file, pkg):
+#     # 初始化文件目录
+#     IC3_output_dir = "../result/" + pkg + "/IC3/IC3_output/"
+#     results_parseIC3_dir = IC3_output_dir + 'parsed_ic3/'
+#     if not os.path.exists(results_parseIC3_dir):
+#         os.makedirs(results_parseIC3_dir)
+#     IC3_atg = results_parseIC3_dir + pkg + '.txt'
+#     with open(IC3_atg, 'w') as f:
+#         f.write('')
+#
+#     # 原代码
+#     dict = {}
+#     if not os.path.exists(file):
+#         return
+#     f = open(file, 'r')
+#     line = f.readline()
+#     flag = -1
+#     s = 0 # indicate component
+#     brace = 0 # indicate the number of braces
+#     while line:
+#         if '{' in line:
+#             brace += 1
+#         if '}' in line:
+#             brace -= 1
+#         if 'components {' in line:
+#             s = 1
+#             flag = -1
+#             tmp =''
+#             brace = 1
+#         elif s == 1 and 'name:' in line:
+#             tmp = line.split(': "')[1].split('"')[0]
+#             s = 2
+#         elif s == 2 and 'kind: ACTIVITY' in line:
+#             flag = 0
+#             sourceActivity = tmp
+#             s = 3
+#         elif flag == 0 and "exit_points" in line:
+#             flag = 1
+#         elif flag == 1 and 'statement' in line:
+#             stm = line.split(': "')[1].split('"')[0]
+#             flag = 2
+#         elif flag == 2 and 'method: "' in line:
+#             mtd = line.split(': "<')[1].split('>"')[0]
+#             flag = 3
+#         elif flag == 3 and 'kind: ' in line:
+#             if 'kind: ACTIVITY' in line:
+#                 flag = 4
+#             else:
+#                 flag = 0
+#         elif flag == 4 and 'kind: CLASS' in line:
+#             flag = 5
+#         elif flag == 5 and 'value' in line:
+#             if ': "L' in line:
+#                 targetActivity = line.strip().split(': "L')[1].split(';"')[0].replace('/', '.')
+#                 if targetActivity.endswith('"'):
+#                     targetActivity = targetActivity.split('"')[0]
+#             else:
+#                 targetActivity = line.strip().split(': "')[1].split(';"')[0].replace('/', '.')
+#                 if targetActivity.endswith('"'):
+#                     targetActivity = targetActivity.split('"')[0]
+#             if not pkg in targetActivity:
+#                 flag = 0
+#                 continue
+#             if not sourceActivity in dict.keys():
+#                 dict[sourceActivity] = set()
+#             dict[sourceActivity].add(targetActivity)
+#             flag = 4
+#         if brace == 1 and s == 3: # in component, find more exit_points
+#             flag = 0
+#         line = f.readline()
+#
+#     # 保存信息
+#     for k, v in dict.items():
+#         for v1 in v:
+#             with open(IC3_atg, 'a') as f:
+#                 f.write(k + '-->' + v1 + '\n')
+#
+#     return dict
+
 if __name__ == "__main__":
-    # get_touch_events()
-    # device = u2.connect()
-    # device.press("back")
-    # result = subprocess.check_output(r"aapt dump badging ./input_apk_test/com.utazukin.ichaival_32.apk | grep launchable-activity | awk '{print $2}'", shell=True)
-    # launch_activity = result.decode('utf-8').split('name=\'')[1].split('\'')[0]
-    # print(launch_activity)
+    pass
+    from androguard.misc import AnalyzeAPK
+    from androguard.core.analysis.analysis import Analysis
 
-    # cmd = "adb shell am start -n " + "com.csnmedia.android.bg/.activities.MainActivity"
-    # console_result = subprocess.check_output(cmd, shell=True)
-    # print(console_result.decode("utf8"))
-    # import re
-    #
-    # s = "com.google.android.apps.chrome.Main.xml"
-    # s = re.sub(r'\d*\.xml$', '', s)
-    # print(s)
+    apk_path = "/home/xiaobudian/PycharmProjects/GraduationProject/crash_apk2/active-TAN-debug.apk"
+    a, d, dx = AnalyzeAPK(apk_path)
 
-    # cmd = "adb shell monkey --throttle 50 -p com.example.bottomnavigationactivity_menu -v 10000"
-    # p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-    #
-    # for line in iter(p.stdout.readline, b''):
-    #     output = line.decode('utf-8')
-    #     print(output)
-    #     if 'CRASH' in output:
-    #         # Handle the crash
-    #         print("CRASH DETECTED: " + output)
-    #         # further actions can be taken such as sending notifications or saving crash log
-    #         break
-    # p.kill()
-    a = list()
-    print(len(a))
+    # 获取应用程序中所有类的列表
+    classes = dx.get_classes()
+
+    # 遍历所有类并获取方法调用图
+    for clazz in classes:
+        if 'activity' in clazz.name or 'Activity' in clazz.name:
+            methods = clazz.get_methods()
+            tempjudge = 0
+            for method in methods:
+                if 'activity' in method.name or 'Activity' in method.name:
+                    tempjudge = 1
+            if tempjudge == 0:
+                continue
+            elif tempjudge == 1:
+                print("Class name:", clazz.name)
+                for method in methods:
+                    if 'activity' in method.name or 'Activity' in method.name:
+                        print("    Method name:", method.name)
+                        xref = method.get_xref_from()
+                        for x in xref:
+                            print("        Called from:", x)
+        else:
+            continue
+
+

@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from tool import get_activity
 from .static_path_config import Path
@@ -16,7 +17,7 @@ def get_soot_atg(apk_path):
     java_home_path = Path.java_home_path
     sdk_platform_path = Path.sdk_platform_path
     lib_home_path = Path.lib_home_path
-    test_output_dir = "../result/" + package_name + "/soot_test_output/"
+    test_output_dir = "../result/" + package_name + "/soot_test_output_copy/"
 
     results_enhancedIC3_label = test_output_dir + 'outputs/' + package_name + '/activity_paras.txt'
     if os.path.exists(results_enhancedIC3_label):
@@ -47,7 +48,13 @@ def get_soot_output(apk_path):
     if not os.path.exists(test_output_dir):
         os.makedirs(test_output_dir)
     soot(apk_path, package_name)
-    get_soot_atg(apk_path)
+
+    # soot的输出复制一份,以免多进程操作互斥
+    soot_source_dir = "../result/" + package_name + "/soot_test_output/"
+    test_target_dir = "../result/" + package_name + "/soot_test_output_copy/"
+    if os.path.exists(test_target_dir):
+        shutil.rmtree(test_target_dir)
+    shutil.copytree(soot_source_dir, test_target_dir)
 
 
 if __name__ == '__main__':

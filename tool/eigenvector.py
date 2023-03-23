@@ -1,6 +1,6 @@
 import hashlib
 import xml.etree.ElementTree as ET
-from xml.etree.ElementTree import ElementTree, Element
+
 
 def get_vector(dxml, project):
     vector_str = ""
